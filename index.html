@@ -4,8 +4,10 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="사장마켓 - 상담 신청하기">
     <meta property="og:description" content="단말기 설치나 A/S 문의가 있다면 언제든지 연락주세요.">
-    <meta property="og:image" content="image_1.png">
-    <meta property="og:url" content="https://yourdomain.com/consult.html"> <meta charset="UTF-8">
+    <meta property="og:image" content="https://jjong0104-boop.github.io/sogo_re/image_1.png">
+    <meta property="og:url" content="https://jjong0104-boop.github.io/sogo_re/">
+
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>사장마켓 - 상담 문의</title>
     
@@ -15,16 +17,14 @@
             theme: {
                 extend: {
                     colors: {
-                        'sajang-orange': '#ff8224', /* 메인 오렌지 */
-                        /* 요청사항: 아주 연하게 배경 (거의 투명도 20% 느낌) */
-                        'sajang-bg-light': 'rgba(255, 130, 36, 0.08)', /* 아주 투명한 주황빛 */
+                        'sajang-orange': '#ff8224',
+                        'sajang-bg-light': 'rgba(255, 130, 36, 0.08)',
                     }
                 }
             }
         }
     </script>
     <style>
-        /* 기본 모바일 최적화 및 스타일 */
         body {
             -webkit-tap-highlight-color: transparent;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -33,42 +33,34 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* 요청사항: 아주 연한 배경색 적용 */
+            /* 배경색: 아주 연한 오렌지 (투명도 약 8%) */
             background-color: rgba(255, 130, 36, 0.08); 
         }
-        
-        /* 탭 활성화 스타일 (배경 그라데이션) */
         .tab.active {
             color: #ffffff !important;
             font-weight: bold;
             background: linear-gradient(90deg, #ff8224 0%, #ffa556 100%);
-            border-radius: 8px; /* 둥근 탭 */
+            border-radius: 8px;
         }
-        
-        /* 입력창 포커스 효과 */
         input:focus, textarea:focus {
             outline: none !important;
             border-color: #ff8224 !important;
             box-shadow: 0 0 0 1px #ff8224 !important;
         }
-        
-        /* 터치 시 피드백 */
-        button:active, .tab:active {
-            opacity: 0.8;
-        }
+        button:active, .tab:active { opacity: 0.8; }
+        .submitting { opacity: 0.5; pointer-events: none; }
     </style>
 </head>
 <body class="text-gray-900">
 
     <div class="max-w-md w-full p-6 flex flex-col items-center">
-
         <header class="pt-6 pb-2 w-full flex justify-center">
-            <img src="image_0.png" alt="사장마켓 로고" class="h-10 w-auto">
+            <img src="https://jjong0104-boop.github.io/sogo_re/image_0.png" alt="사장마켓 로고" class="h-10 w-auto">
         </header>
 
         <h1 class="text-xl font-bold mt-4 text-center">사장마켓에 궁금하신 점을 남겨주세요</h1>
 
-        <div class="w-full bg-white rounded-xl shadow-lg mt-8 p-6 space-y-7">
+        <form id="consultForm" class="w-full bg-white rounded-xl shadow-lg mt-8 p-6 space-y-7">
             
             <div class="flex border-b border-gray-200">
                 <div class="tab w-1/2 text-center py-4 cursor-pointer text-xl text-gray-500 border-b-2 border-transparent active" onclick="selectTab(this)">재상담 요청</div>
@@ -105,44 +97,59 @@
                 
                 <div class="flex items-center">
                     <input id="agree_personal" name="agree_personal" type="checkbox" required class="h-5 w-5 text-sajang-orange border-gray-300 rounded focus:ring-0">
-                    <label for="agree_personal" class="ml-3 text-sm text-gray-600">
-                        [필수] 개인정보 수집 및 이용 동의
-                    </label>
+                    <label for="agree_personal" class="ml-3 text-sm text-gray-600">[필수] 개인정보 수집 및 이용 동의</label>
                     <a href="#" class="ml-auto text-sm text-gray-400 text-right">[보기]</a>
                 </div>
 
                 <div class="flex items-center">
                     <input id="agree_thirdparty" name="agree_thirdparty" type="checkbox" required class="h-5 w-5 text-sajang-orange border-gray-300 rounded focus:ring-0">
-                    <label for="agree_thirdparty" class="ml-3 text-sm text-gray-600">
-                        [필수] 개인정보 제3자 제공 동의
-                    </label>
+                    <label for="agree_thirdparty" class="ml-3 text-sm text-gray-600">[필수] 개인정보 제3자 제공 동의</label>
                     <a href="#" class="ml-auto text-sm text-gray-400 text-right">[보기]</a>
                 </div>
             </div>
 
             <div class="mt-10 mb-6">
-                <button type="submit" 
+                <button type="submit" id="submitBtn"
                     class="w-full py-4 bg-sajang-orange text-white font-bold rounded-xl text-base shadow-lg shadow-orange-200 transition-transform active:scale-[0.98]">
                     상담 신청하기
                 </button>
             </div>
-        </div>
-
+        </form>
     </div>
 
     <script>
-        // 탭 선택 기능
-        function selectTab(element) {
-            // 모든 탭 비활성화
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            // 클릭한 탭 활성화 (CSS에 정의된 배경 그라데이션 적용)
-            element.classList.add('active');
-            
-            // 숨겨진 필드 값 변경
-            const typeText = element.innerText;
-            document.getElementById('consultType').value = typeText;
-        }
-    </script>
+        // [수정 필요] 생성하신 구글 앱 스크립트 웹 앱 URL을 여기에 넣어주세요!
+        const scriptURL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+        const form = document.getElementById('consultForm');
+        const submitBtn = document.getElementById('submitBtn');
 
+        function selectTab(element) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('consultType').value = element.innerText;
+        }
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            submitBtn.innerText = "전송 중...";
+            submitBtn.disabled = true;
+            form.classList.add('submitting');
+
+            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(response => {
+                alert('상담 신청이 완료되었습니다. 조속히 연락드리겠습니다!');
+                form.reset();
+                submitBtn.innerText = "상담 신청하기";
+                submitBtn.disabled = false;
+                form.classList.remove('submitting');
+            })
+            .catch(error => {
+                alert('오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                submitBtn.innerText = "상담 신청하기";
+                submitBtn.disabled = false;
+                form.classList.remove('submitting');
+            });
+        });
+    </script>
 </body>
 </html>
