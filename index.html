@@ -3,14 +3,12 @@
 <head>
     <meta property="og:type" content="website">
     <meta property="og:title" content="사장마켓 - 상담 신청하기">
-    <meta property="og:description" content="단말기 설치나 A/S 문의가 있다면 언제든지 연락주세요.">
+    <meta property="og:description" content="설치나 A/S 문의가 있다면 언제든지 연락주세요.">
     <meta property="og:image" content="https://jjong0104-boop.github.io/sogo_re/image_1.jpg?v=1">
     <meta property="og:url" content="https://jjong0104-boop.github.io/sogo_re/">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>사장마켓 - 상담 문의</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -18,7 +16,6 @@
                 extend: {
                     colors: {
                         'sajang-orange': '#ff8224',
-                        /* 배경: 투명도 20% 미만의 아주 연한 오렌지색 */
                         'sajang-bg-light': 'rgba(255, 130, 36, 0.08)',
                     }
                 }
@@ -29,26 +26,26 @@
         body {
             -webkit-tap-highlight-color: transparent;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
             background-color: rgba(255, 130, 36, 0.08); 
         }
         .tab.active {
-            color: #ffffff !important;
-            font-weight: bold;
+            color: #ffffff !important; font-weight: bold;
             background: linear-gradient(90deg, #ff8224 0%, #ffa556 100%);
             border-radius: 8px;
         }
         input:focus, textarea:focus {
-            outline: none !important;
-            border-color: #ff8224 !important;
+            outline: none !important; border-color: #ff8224 !important;
             box-shadow: 0 0 0 1px #ff8224 !important;
         }
-        button:active, .tab:active { opacity: 0.8; }
+        /* 로딩/전송 중 비활성화 스타일 */
         .submitting { opacity: 0.5; pointer-events: none; }
+        
+        /* 커스텀 모달(팝업) 레이어 */
+        #customModal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            align-items: center; justify-content: center; z-index: 9999; padding: 20px;
+        }
     </style>
 </head>
 <body class="text-gray-900">
@@ -61,72 +58,78 @@
         <h1 class="text-xl font-bold mt-4 text-center">사장마켓에 궁금하신 점을 남겨주세요</h1>
 
         <form id="consultForm" class="w-full bg-white rounded-xl shadow-lg mt-8 p-6 space-y-7">
-            
             <div class="flex border-b border-gray-200">
                 <div class="tab w-1/2 text-center py-4 cursor-pointer text-xl text-gray-500 border-b-2 border-transparent active" onclick="selectTab(this)">재상담 요청</div>
                 <div class="tab w-1/2 text-center py-4 cursor-pointer text-xl text-gray-500 border-b-2 border-transparent" onclick="selectTab(this)">설치 문의</div>
             </div>
-
             <input type="hidden" name="type" id="consultType" value="재상담 요청">
 
             <div class="space-y-7">
                 <div class="relative">
-                    <input type="tel" name="phone" id="phone" required
-                        class="block w-full px-0 py-3 pt-6 text-base bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:ring-0 peer" placeholder=" " />
-                    <label for="phone" class="absolute text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-sajang-orange">휴대폰번호</label>
+                    <input type="tel" name="phone" id="phone" required class="block w-full px-0 py-3 pt-6 text-base bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:ring-0 peer" placeholder=" " />
+                    <label class="absolute text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-sajang-orange">휴대폰번호</label>
                 </div>
-
                 <div class="relative">
-                    <textarea name="inquiry" id="inquiry" required rows="3"
-                        class="block w-full px-0 py-3 pt-6 text-base bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:ring-0 peer resize-none" placeholder=" "></textarea>
-                    <label for="inquiry" class="absolute text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-sajang-orange">문의 내용 <span class="text-xs text-gray-400">(필수)</span></label>
+                    <textarea name="inquiry" id="inquiry" required rows="3" class="block w-full px-0 py-3 pt-6 text-base bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:ring-0 peer resize-none" placeholder=" "></textarea>
+                    <label class="absolute text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-sajang-orange">문의 내용 (필수)</label>
                     <p class="mt-1 text-xs text-gray-400">(예) 2시에 전화주세요</p>
                 </div>
             </div>
 
-            <div class="space-y-7 pt-2">
-                <div class="relative">
-                    <input type="text" name="business_no" id="business_no"
-                        class="block w-full px-0 py-3 pt-6 text-base bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:ring-0 peer" placeholder=" " />
-                    <label for="business_no" class="absolute text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-sajang-orange">사업자번호 (선택)</label>
-                </div>
+            <div class="relative">
+                <input type="text" name="business_no" id="business_no" class="block w-full px-0 py-3 pt-6 text-base bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:ring-0 peer" placeholder=" " />
+                <label class="absolute text-gray-500 duration-300 transform -translate-y-4 scale-75 top-4 z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-sajang-orange">사업자번호 (선택)</label>
             </div>
 
             <div class="pt-4 space-y-3">
-                <p class="text-xs text-gray-400 pb-1">서비스 이용을 위해 아래 내용에 동의해 주세요.</p>
-                
                 <div class="flex items-center">
-                    <input id="agree_personal" name="agree_personal" type="checkbox" required class="h-5 w-5 text-sajang-orange border-gray-300 rounded focus:ring-0">
-                    <label for="agree_personal" class="ml-3 text-sm text-gray-600">[필수] 개인정보 수집 및 이용 동의</label>
-                    <a href="#" class="ml-auto text-sm text-gray-400 text-right">[보기]</a>
+                    <input id="agree_personal" type="checkbox" required class="h-5 w-5 text-sajang-orange border-gray-300 rounded focus:ring-0">
+                    <label for="agree_personal" class="ml-3 text-sm text-gray-600 font-medium">[필수] 개인정보 수집 및 이용 동의</label>
                 </div>
-
                 <div class="flex items-center">
-                    <input id="agree_thirdparty" name="agree_thirdparty" type="checkbox" required class="h-5 w-5 text-sajang-orange border-gray-300 rounded focus:ring-0">
-                    <label for="agree_thirdparty" class="ml-3 text-sm text-gray-600">[필수] 개인정보 제3자 제공 동의</label>
-                    <a href="#" class="ml-auto text-sm text-gray-400 text-right">[보기]</a>
+                    <input id="agree_thirdparty" type="checkbox" required class="h-5 w-5 text-sajang-orange border-gray-300 rounded focus:ring-0">
+                    <label for="agree_thirdparty" class="ml-3 text-sm text-gray-600 font-medium">[필수] 개인정보 제3자 제공 동의</label>
                 </div>
             </div>
 
-            <div class="mt-10 mb-6">
-                <button type="submit" id="submitBtn"
-                    class="w-full py-4 bg-sajang-orange text-white font-bold rounded-xl text-base shadow-lg shadow-orange-200 transition-transform active:scale-[0.98]">
-                    상담 신청하기
-                </button>
-            </div>
+            <button type="submit" id="submitBtn" class="w-full py-4 bg-sajang-orange text-white font-bold rounded-xl text-base shadow-lg shadow-orange-200 transition-transform active:scale-[0.98]">
+                상담 신청하기
+            </button>
         </form>
     </div>
 
+    <div id="customModal" onclick="closeModal()">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-[280px] w-full text-center space-y-5 transform transition-all" onclick="event.stopPropagation()">
+            <div class="flex justify-center">
+                <div class="bg-orange-100 p-3 rounded-full">
+                    <svg class="w-10 h-10 text-sajang-orange" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-[17px] font-bold text-gray-800 leading-snug">
+                사장마켓이 빠른 시일 내에<br>연락드리겠습니다!
+            </p>
+            <button onclick="closeModal()" class="w-full py-3 bg-sajang-orange text-white font-bold rounded-xl shadow-md active:scale-95 transition-transform">
+                확인
+            </button>
+        </div>
+    </div>
+
     <script>
-        // 요청하신 구글 웹 앱 URL 반영 완료
         const scriptURL = 'https://script.google.com/macros/s/AKfycbzHmpR1Arfm8eqdr7HsNG0OMqgHy1U5Z56D8XpIBmXT01dizEqavvxDJ3KPIAgpXysnVw/exec';
         const form = document.getElementById('consultForm');
         const submitBtn = document.getElementById('submitBtn');
+        const modal = document.getElementById('customModal');
 
         function selectTab(element) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             element.classList.add('active');
             document.getElementById('consultType').value = element.innerText;
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
         }
 
         form.addEventListener('submit', e => {
@@ -137,15 +140,16 @@
 
             fetch(scriptURL, { method: 'POST', body: new FormData(form)})
             .then(response => {
-                // 요청하신 팝업 문구 수정 완료
-                alert('사장마켓이 빠른 시일 내에 연락드리겠습니다!'); 
+                // 전송 성공 시 커스텀 팝업 띄우기
+                modal.style.display = 'flex';
                 form.reset();
                 submitBtn.innerText = "상담 신청하기";
                 submitBtn.disabled = false;
                 form.classList.remove('submitting');
             })
             .catch(error => {
-                alert('오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                // 에러 발생시에만 기본 alert 사용 (거의 발생 안 함)
+                alert('연결 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
                 submitBtn.innerText = "상담 신청하기";
                 submitBtn.disabled = false;
                 form.classList.remove('submitting');
